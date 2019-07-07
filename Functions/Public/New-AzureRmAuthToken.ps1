@@ -1,26 +1,25 @@
 function New-AzureRmAuthToken
 {
     <#
-        .SYNOPSIS
+    .SYNOPSIS
         Creates a new authentication token for use against Azure RM REST API operations.
 
-        .DESCRIPTION
+    .DESCRIPTION
         Creates a new authentication token for use against Azure RM REST API operations. This uses client/secret auth (not certificate auth).
         The returned output contains the OAuth bearer token and it's properties.
 
-        .PARAMETER AadClientAppId
+    .PARAMETER AadClientAppId
         The AAD client application ID.
 
-        .PARAMETER AadClientAppSecret
+    .PARAMETER AadClientAppSecret
         The AAD client application secret
 
-        .PARAMETER AadTenantId
+    .PARAMETER AadTenantId
         The AAD tenant ID.
 
-        .EXAMPLE
-        New-AzureRmAuthToken -AadClientAppId <guid> -AadClientAppSecret '<secret>' -AadTenantId <guid>
+    .EXAMPLE
+        C:\> New-AzureRmAuthToken -AadClientAppId <guid> -AadClientAppSecret '<secret>' -AadTenantId <guid>
     #>
-
     [CmdletBinding()]
     Param
     (
@@ -36,7 +35,6 @@ function New-AzureRmAuthToken
         [System.String]
         $AadTenantId
     )
-    
     Process
     {
         # grab app constants
