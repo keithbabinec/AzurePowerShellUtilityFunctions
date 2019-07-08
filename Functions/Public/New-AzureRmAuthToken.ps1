@@ -23,15 +23,21 @@ function New-AzureRmAuthToken
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory=$true, HelpMessage='Please provide the AAD client application ID.')]
+        [Parameter(
+            Mandatory=$true,
+            HelpMessage='Please provide the AAD client application ID.')]
         [System.String]
         $AadClientAppId,
 
-        [Parameter(Mandatory=$true, HelpMessage='Please provide the AAD client application secret.')]
+        [Parameter(
+            Mandatory=$true,
+            HelpMessage='Please provide the AAD client application secret.')]
         [System.String]
         $AadClientAppSecret,
 
-        [Parameter(Mandatory=$true, HelpMessage='Please provide the AAD tenant ID.')]
+        [Parameter(
+            Mandatory=$true,
+            HelpMessage='Please provide the AAD tenant ID.')]
         [System.String]
         $AadTenantId
     )
