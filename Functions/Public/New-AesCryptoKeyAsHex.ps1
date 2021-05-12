@@ -22,10 +22,10 @@ function New-AesCryptoKeyAsHex
     {
         # new instance of the AES crypto .net class
         # it auto-generates a new IV and Key on class instantiation...
-        $aes = New-Object -TypeName 'System.Security.Cryptography.AesManaged'
+        $aes = New-Object -TypeName 'System.Security.Cryptography.AesManaged';
 
         # convert the crypto key (byte array) to the desired format and return it
-        $result = [System.BitConverter]::ToString($aes.Key).Replace("-", "")
-        Write-Output -InputObject $result
+        $result = [System.BitConverter]::ToString($aes.Key).Replace("-", "");
+        Write-Output -InputObject $result;
     }
 }

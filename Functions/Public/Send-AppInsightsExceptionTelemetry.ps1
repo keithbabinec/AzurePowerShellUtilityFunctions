@@ -51,57 +51,56 @@ function Send-AppInsightsExceptionTelemetry
     {
 		# app insights has a single endpoint where all incoming telemetry is processed.
 		# documented here: https://github.com/microsoft/ApplicationInsights-Home/blob/master/EndpointSpecs/ENDPOINT-PROTOCOL.md
-        
-		$AppInsightsIngestionEndpoint = $MyInvocation.MyCommand.Module.PrivateData.Constants.AppInsightsIngestionEndpoint
-		
+
+		$AppInsightsIngestionEndpoint = $MyInvocation.MyCommand.Module.PrivateData.Constants.AppInsightsIngestionEndpoint;
+
 		# prepare custom properties
 		# convert the hashtable to a custom object, if properties were supplied.
-		
 		if ($PSBoundParameters.ContainsKey('CustomProperties') -and $CustomProperties.Count -gt 0)
 		{
-			$customPropertiesObj = [PSCustomObject]$CustomProperties
+			$customPropertiesObj = [PSCustomObject]$CustomProperties;
 		}
 		else
 		{
-			$customPropertiesObj = [PSCustomObject]@{}
+			$customPropertiesObj = [PSCustomObject]@{};
 		}
 
         # prepare the exceptions info.
         # this parses the exceptions and inner exceptions with stack traces and turns them into a format friendly for app insights.
 
-        $exceptionDetails = Convert-ExceptionToAiExceptionDetails -Exception $Exception
+        $exceptionDetails = Convert-ExceptionToAiExceptionDetails -Exception $Exception;
         
 		# prepare the REST request body schema.
 		# NOTE: this schema represents how exceptions are sent as of the app insights .net client library v2.9.1.
 		# newer versions of the library may change the schema over time and this may require an update to match schemas found in newer libraries.
 		
 		$bodyObject = [PSCustomObject]@{
-			'name' = "Microsoft.ApplicationInsights.$InstrumentationKey.Exception"
-			'time' = ([System.dateTime]::UtcNow.ToString('o'))
-			'iKey' = $InstrumentationKey
+			'name' = "Microsoft.ApplicationInsights.$InstrumentationKey.Exception";
+			'time' = ([System.dateTime]::UtcNow.ToString('o'));
+			'iKey' = $InstrumentationKey;
 			'tags' = [PSCustomObject]@{
 				'ai.cloud.roleInstance' = $ENV:COMPUTERNAME
-				'ai.internal.sdkVersion' = 'AzurePowerShellUtilityFunctions'
+				'ai.internal.sdkVersion' = 'AzurePowerShellUtilityFunctions';
 			}
 			'data' = [PSCustomObject]@{
-				'baseType' = 'ExceptionData'
+				'baseType' = 'ExceptionData';
 				'baseData' = [PSCustomObject]@{
-					'ver' = '2'
-					'exceptions' = $exceptionDetails
-					'properties' = $customPropertiesObj
+					'ver' = '2';
+					'exceptions' = @($exceptionDetails);
+					'properties' = $customPropertiesObj;
 				}
 			}
-		}
+		};
 
 		# convert the body object into a json blob.
-		# prepare the headers
-		# send the request
+		$bodyAsCompressedJson = $bodyObject | ConvertTo-JSON -Depth 20 -Compress;
 
-		$bodyAsCompressedJson = $bodyObject | ConvertTo-JSON -Depth 20 -Compress
+		# prepare the headers
 		$headers = @{
 			'Content-Type' = 'application/x-json-stream';
-		}
+		};
 
-		Invoke-RestMethod -Uri $AppInsightsIngestionEndpoint -Method Post -Headers $headers -Body $bodyAsCompressedJson
+		# send the request
+		Invoke-RestMethod -Uri $AppInsightsIngestionEndpoint -Method Post -Headers $headers -Body $bodyAsCompressedJson;
     }
 }

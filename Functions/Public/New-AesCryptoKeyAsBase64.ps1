@@ -22,10 +22,10 @@ function New-AesCryptoKeyAsBase64
     {
         # new instance of the AES crypto .net class
         # it auto-generates a new IV and Key on class instantiation...
-        $aes = New-Object -TypeName 'System.Security.Cryptography.AesManaged'
+        $aes = New-Object -TypeName 'System.Security.Cryptography.AesManaged';
 
         # convert the crypto key (byte array) to the desired format and return it
-        $result = [System.Convert]::ToBase64String($aes.Key)
-        Write-Output -InputObject $result
+        $result = [System.Convert]::ToBase64String($aes.Key);
+        Write-Output -InputObject $result;
     }
 }

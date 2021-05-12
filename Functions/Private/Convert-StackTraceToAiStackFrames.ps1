@@ -32,18 +32,18 @@ function Convert-StackTraceToAiStackFrames
     )
     Process
     {
-        $frames = New-Object -TypeName 'System.Collections.Generic.List[PSCustomObject]'
+        $frames = New-Object -TypeName 'System.Collections.Generic.List[PSCustomObject]';
 
         if (![System.String]::IsNullOrWhiteSpace($StackTrace))
         {
-            $splitStack = $StackTrace.Split([System.Environment]::NewLine)
-            $currentLevel = 0
+            $splitStack = $StackTrace.Split([System.Environment]::NewLine);
+            $currentLevel = 0;
 
             foreach ($line in $splitStack)
             {
                 if (![System.String]::IsNullOrWhiteSpace($line))
                 {
-                    $trimmedLine = $line.Trim()
+                    $trimmedLine = $line.Trim();
 
                     if ($trimmedLine.StartsWith("at "))
                     {
@@ -52,15 +52,15 @@ function Convert-StackTraceToAiStackFrames
                             'method' = $trimmedLine.Substring(3)
                             'assembly' = $Assembly
                             'line' = 0
-                        }
+                        };
 
-                        $frames.Add($frame)
-                        $currentLevel++
+                        $frames.Add($frame);
+                        $currentLevel++;
                     }
                 }
             }
         }
 
-        Write-Output -InputObject $frames
+        Write-Output -InputObject $frames;
     }
 }

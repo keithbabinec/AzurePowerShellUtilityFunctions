@@ -52,18 +52,18 @@ function Send-AppInsightsEventTelemetry
 		# app insights has a single endpoint where all incoming telemetry is processed.
 		# documented here: https://github.com/microsoft/ApplicationInsights-Home/blob/master/EndpointSpecs/ENDPOINT-PROTOCOL.md
         
-		$AppInsightsIngestionEndpoint = $MyInvocation.MyCommand.Module.PrivateData.Constants.AppInsightsIngestionEndpoint
+		$AppInsightsIngestionEndpoint = $MyInvocation.MyCommand.Module.PrivateData.Constants.AppInsightsIngestionEndpoint;
 		
 		# prepare custom properties
 		# convert the hashtable to a custom object, if properties were supplied.
 		
 		if ($PSBoundParameters.ContainsKey('CustomProperties') -and $CustomProperties.Count -gt 0)
 		{
-			$customPropertiesObj = [PSCustomObject]$CustomProperties
+			$customPropertiesObj = [PSCustomObject]$CustomProperties;
 		}
 		else
 		{
-			$customPropertiesObj = [PSCustomObject]@{}
+			$customPropertiesObj = [PSCustomObject]@{};
 		}
 
 		# prepare the REST request body schema.
@@ -86,16 +86,17 @@ function Send-AppInsightsEventTelemetry
 					'properties' = $customPropertiesObj
 				}
 			}
-		}
+		};
 
 		# convert the body object into a json blob.
-		# prepare the headers
-		# send the request
+		$bodyAsCompressedJson = $bodyObject | ConvertTo-JSON -Depth 10 -Compress;
 
-		$bodyAsCompressedJson = $bodyObject | ConvertTo-JSON -Depth 10 -Compress
+		# prepare the headers
 		$headers = @{
 			'Content-Type' = 'application/x-json-stream';
-		}
-		Invoke-RestMethod -Uri $AppInsightsIngestionEndpoint -Method Post -Headers $headers -Body $bodyAsCompressedJson
+		};
+
+		# send the request
+		Invoke-RestMethod -Uri $AppInsightsIngestionEndpoint -Method Post -Headers $headers -Body $bodyAsCompressedJson;
     }
 }
