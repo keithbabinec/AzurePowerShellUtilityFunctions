@@ -26,43 +26,47 @@ function Convert-ExceptionToAiExceptionDetails
     )
     Process
     {
-        $ExceptionDetails = New-Object -TypeName 'System.Collections.Generic.List[PSCustomObject]'
-        $ParentExceptionId = 0
+        $ExceptionDetails = New-Object -TypeName 'System.Collections.Generic.List[PSCustomObject]';
+        $ParentExceptionId = 0;
 
         while ($true)
         {
-            $CurrentExceptionId = $Exception.GetHashCode()
+            $CurrentExceptionId = $Exception.GetHashCode();
             
             $exInfo = [PSCustomObject]@{
                 'id' = $CurrentExceptionId
                 'outerId' = $ParentExceptionId
                 'typeName' = ($Exception.GetType().FullName)
                 'message' = $Exception.Message
-            }
+            };
 
-            $ParsedStack = Convert-StackTraceToAiStackFrames -Assembly $Exception.TargetSite.Module.Assembly.ToString() -StackTrace $Exception.StackTrace
+            if( $Exception.TargetSite -and $Exception.TargetSite.Module -and $Exception.TargetSite.Module.Assembly ) {
+                $ParsedStack = Convert-StackTraceToAiStackFrames -Assembly $Exception.TargetSite.Module.Assembly.ToString() -StackTrace $Exception.StackTrace;
+            } else {
+                $ParsedStack = Convert-StackTraceToAiStackFrames -Assembly "Unknown Assembly" -StackTrace "at Missing stack trace";
+            }         
 
-            if ($ParsedStack -ne $null -and $ParsedStack.Count -gt 0)
+            if ($ParsedStack -and $ParsedStack.Count -gt 0)
             {
-                $exInfo | Add-Member -MemberType NoteProperty -Name 'hasFullStack' -Value $true
-                $exInfo | Add-Member -MemberType NoteProperty -Name 'parsedStack' -Value $ParsedStack
+                $exInfo | Add-Member -MemberType NoteProperty -Name 'hasFullStack' -Value $true;
+                $exInfo | Add-Member -MemberType NoteProperty -Name 'parsedStack' -Value $ParsedStack;
             }
 
-            $ExceptionDetails.Add($exInfo)
+            $ExceptionDetails.Add($exInfo);
 
             # advance to the next exception in the tree
 
-            if ($Exception.InnerException -ne $null)
+            if ($Exception.InnerException)
             {
-                $Exception = $Exception.InnerException
-                $ParentExceptionId = $CurrentExceptionId    
+                $Exception = $Exception.InnerException;
+                $ParentExceptionId = $CurrentExceptionId;
             }
             else
             {
-                break
+                break;
             }
         }
 
-        Write-Output -InputObject $ExceptionDetails
+        Write-Output -InputObject $ExceptionDetails;
     }
 }

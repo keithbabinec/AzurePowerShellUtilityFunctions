@@ -44,27 +44,27 @@ function New-AzureRmAuthToken
     Process
     {
         # grab app constants
-        $aadUri = $MyInvocation.MyCommand.Module.PrivateData.Constants.AadAuthenticationUri
-        $resource = $MyInvocation.MyCommand.Module.PrivateData.Constants.AadAuthenticationResource
+        $aadUri = $MyInvocation.MyCommand.Module.PrivateData.Constants.AadAuthenticationUri;
+        $resource = $MyInvocation.MyCommand.Module.PrivateData.Constants.AadAuthenticationResource;
 
         # load the web assembly and encode parameters
-        $null = [Reflection.Assembly]::LoadWithPartialName('System.Web')
-        $encodedClientAppSecret = [System.Web.HttpUtility]::UrlEncode($AadClientAppSecret)
-        $encodedResource = [System.Web.HttpUtility]::UrlEncode($Resource)
+        $null = [Reflection.Assembly]::LoadWithPartialName('System.Web');
+        $encodedClientAppSecret = [System.Web.HttpUtility]::UrlEncode($AadClientAppSecret);
+        $encodedResource = [System.Web.HttpUtility]::UrlEncode($Resource);
 
         # construct and send the request
-        $tenantAuthUri = $aadUri -f $AadTenantId
+        $tenantAuthUri = $aadUri -f $AadTenantId;
         $headers = @{
             'Content-Type' = 'application/x-www-form-urlencoded';
-        }
+        };
         $bodyParams = @(
             "grant_type=client_credentials",
             "client_id=$AadClientAppId",
             "client_secret=$encodedClientAppSecret",
             "resource=$encodedResource"
-        )
-        $body = [System.String]::Join("&", $bodyParams)
+        );
+        $body = [System.String]::Join("&", $bodyParams);
 
-        Invoke-RestMethod -Uri $tenantAuthUri -Method POST -Headers $headers -Body $body
+        Invoke-RestMethod -Uri $tenantAuthUri -Method POST -Headers $headers -Body $body;
     }
 }
